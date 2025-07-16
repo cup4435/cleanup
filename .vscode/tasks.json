@@ -1,0 +1,53 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate protoc files",
+            "type": "shell",
+            "command": "source generate_proto.sh",
+            "options": {
+                "cwd": "${workspaceFolder}/proto"
+            },
+            "problemMatcher": [
+                "$go"
+            ]
+        },
+        {
+            "label": "Go mod tidy",
+            "type": "shell",
+            "command": "find . -name go.mod -execdir go mod tidy \\;",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$go"
+            ]
+        },
+        {
+            "label": "GET to /stock Endpoint at 8080 with ERROR ticker (API Gateway)",
+            "type": "shell",
+            "command": "curl -X GET http://localhost:8080/stock/error-testing",
+            "problemMatcher": [
+                "$go"
+            ]
+        },
+        {
+            "label": "GET to /stock Endpoint at 8080 with exiting ticker (API Gateway)",
+            "type": "shell",
+            "command": "curl -X GET http://localhost:8080/stock/aapl",
+            "problemMatcher": [
+                "$go"
+            ]
+        },
+        {
+            "label": "GET to /stock Endpoint at 8080 with NON-existing ticker (API Gateway)",
+            "type": "shell",
+            "command": "curl -X GET http://localhost:8080/stock/fmsy",
+            "problemMatcher": [
+                "$go"
+            ]
+        }
+    ]
+}

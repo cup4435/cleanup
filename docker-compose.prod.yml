@@ -1,0 +1,30 @@
+---
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile.prod
+    ports:
+      - "8080:8080"
+    environment:
+      - STOCK_PROXY_ADDR=stock-proxy:50051
+    depends_on:
+      - stock-proxy
+    networks:
+      - stock-network
+    restart: unless-stopped
+
+  stock-proxy:
+    build:
+      context: .
+      dockerfile: stock-proxy/Dockerfile.prod
+    expose:
+      - "50051"
+    networks:
+      - stock-network
+    restart: unless-stopped
+
+networks:
+  stock-network:
+    driver: bridge

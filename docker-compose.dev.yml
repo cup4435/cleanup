@@ -1,0 +1,45 @@
+---
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile.dev
+    ports:
+      - "8080:8080"
+    working_dir: /workspaces/cleanup
+    volumes:
+      - .:/workspaces/cleanup
+      - ~/.config/nvim:/host-nvim:ro
+      - go-mod-cache:/go/pkg/mod
+    environment:
+      - STOCK_PROXY_ADDR=stock-proxy:50051
+    depends_on:
+      - stock-proxy
+    networks:
+      - stock-network
+    entrypoint: ["/bin/sh", "-c", "cp -r /host-nvim /root/.config/nvim && sleep infinity"]
+      
+  stock-proxy:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile.dev
+    ports:
+      - "50051:50051"
+    working_dir: /workspaces/cleanup
+    volumes:
+      - .:/workspaces/cleanup
+      - ~/.config/nvim:/host-nvim:ro
+      - go-mod-cache:/go/pkg/mod
+    networks:
+      stock-network:
+        aliases:
+          - stock-proxy
+    entrypoint: ["/bin/sh", "-c", "cp -r /host-nvim /root/.config/nvim && sleep infinity"]
+
+volumes:
+  go-mod-cache:
+
+networks:
+  stock-network:
+    driver: bridge

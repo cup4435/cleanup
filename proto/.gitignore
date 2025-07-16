@@ -1,0 +1,9 @@
+*
+
+!.gitignore
+!generate_proto.sh
+!go.mod
+!go.sum
+!stock_grpc.pb.go
+!stock.pb.go
+!stock.proto

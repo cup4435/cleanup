@@ -1,0 +1,6 @@
+*
+
+!.gitignore
+!devcontainer-lock.json
+!devcontainer.json
+!Dockerfile.dev
