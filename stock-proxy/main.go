@@ -83,7 +83,7 @@ func main() {
 	// Initialize random seed
 	rand.Seed(time.Now().UnixNano())
 
-	port := os.Getenv("PORT")
+	port := os.Getenv("PROXY_PORT")
 	if port == "" {
 		port = "50051"
 	}

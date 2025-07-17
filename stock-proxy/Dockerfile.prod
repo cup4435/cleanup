@@ -13,5 +13,5 @@ WORKDIR /root/
 
 COPY --from=builder /stock-proxy-app .
 
-EXPOSE 50051
+EXPOSE 8080
 CMD ["./stock-proxy-app"]

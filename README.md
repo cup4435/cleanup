@@ -1,6 +1,6 @@
 # Stock Analytics Cleanup
 
-A set of stock analytics microservices using Go and gRPC.
+A set of stock analytics microservices using Go and gRPC, built using various AI models.
 
 ## Services
 
