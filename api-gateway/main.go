@@ -12,7 +12,7 @@ import (
 	pb "cleanup/proto"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 )
 
 type APIResponse struct {
@@ -33,13 +33,10 @@ func main() {
 	var err error
 
 	for i := range 10 {
-		// conn, err = grpc.Dial(stockProxyAddr,
-		// 	grpc.WithTransportCredentials(insecure.NewCredentials()),
-		// 	grpc.WithBlock(),
-		// )
 		conn, err = grpc.NewClient(
-			stockProxyAddr, grpc.WithTransportCredentials(
-				insecure.NewCredentials()))
+			stockProxyAddr,
+			grpc.WithTransportCredentials(
+				credentials.NewClientTLSFromCert(nil, "")))
 		if err == nil {
 			break
 		}
