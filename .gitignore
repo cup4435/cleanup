@@ -2,6 +2,8 @@
 
 !.devcontainer
 !.devcontainer/*
+!.github
+!.github/*
 !.vscode
 !.vscode/*
 !api-gateway
