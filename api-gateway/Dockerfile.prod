@@ -13,6 +13,6 @@ WORKDIR /root/
 
 COPY --from=builder /api-gateway-app .
 
-# Cloud Run port (8080)
+# Cloud Run port
 EXPOSE 8080
 CMD ["./api-gateway-app"]
