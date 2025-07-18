@@ -15,6 +15,8 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
+const PORT = "8080"
+
 type APIResponse struct {
 	Ticker string  `json:"ticker"`
 	Price  float64 `json:"price"`
@@ -94,6 +96,6 @@ func main() {
 		json.NewEncoder(w).Encode(apiResp)
 	})
 
-	log.Println("API Gateway starting on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Printf("API Gateway starting on port %s...", PORT)
+	log.Fatal(http.ListenAndServe(":"+PORT, nil))
 }
