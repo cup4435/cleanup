@@ -13,5 +13,6 @@ WORKDIR /root/
 
 COPY --from=builder /stock-proxy-app .
 
+# Cloud Run port (8080)
 EXPOSE 8080
 CMD ["./stock-proxy-app"]

@@ -1,19 +1,20 @@
-name: Deploy API Gateway
+name: Deploy Services
 
 on:
   push:
     branches: [ "main" ]
     paths:
       - 'api-gateway/**'
+      - 'stock-proxy/**'
 
 env:
   PROJECT_ID: stock-system-2
   REGION: me-west1
-  SERVICE_NAME: api-gateway
   REPO_NAME: cleanup
 
 jobs:
-  deploy:
+  deploy-proxy:
+    name: Deploy Stock Proxy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -26,20 +27,53 @@ jobs:
 
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
-        
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./stock-proxy/Dockerfile.prod
+          push: true
+          tags: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/stock-proxy:${{ github.sha }}
+
+      - name: Deploy to Cloud Run
+        uses: 'google-github-actions/deploy-cloudrun@v2'
+        with:
+          service: 'stock-proxy'
+          region: ${{ env.REGION }}
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/stock-proxy:${{ github.sha }}
+          env_vars: |
+            PROXY_PORT=8080
+
+  deploy-gateway:
+    name: Deploy API Gateway
+    runs-on: ubuntu-latest
+    needs: deploy-proxy
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./api-gateway/Dockerfile.prod
           push: true
-          tags: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          tags: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/api-gateway:${{ github.sha }}
 
       - name: Deploy to Cloud Run
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
-          service: ${{ env.SERVICE_NAME }}
+          service: 'api-gateway'
           region: ${{ env.REGION }}
-          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/api-gateway:${{ github.sha }}
           env_vars: |
             STOCK_PROXY_ADDR=https://stock-proxy-baomtey3ja-zf.a.run.app:443
