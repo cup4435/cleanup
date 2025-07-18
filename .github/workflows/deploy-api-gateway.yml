@@ -44,6 +44,7 @@ jobs:
           image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/stock-proxy:${{ github.sha }}
           env_vars: |
             PROXY_PORT=8080
+          flags: --allow-unauthenticated
 
   deploy-gateway:
     name: Deploy API Gateway
@@ -77,3 +78,4 @@ jobs:
           image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/api-gateway:${{ github.sha }}
           env_vars: |
             STOCK_PROXY_ADDR=https://stock-proxy-baomtey3ja-zf.a.run.app:443
+          flags: --allow-unauthenticated
